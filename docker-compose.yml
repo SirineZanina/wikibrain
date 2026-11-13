@@ -1,0 +1,39 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+      args:
+        EMBED_MODEL_LOCAL: ${EMBED_MODEL_LOCAL:-all-MiniLM-L6-v2}
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY:?set GEMINI_API_KEY in .env}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      EMBEDDER: ${EMBEDDER:-local}
+      TOP_K: ${TOP_K:-4}
+      CHUNK_SIZE: ${CHUNK_SIZE:-800}
+      CHUNK_OVERLAP: ${CHUNK_OVERLAP:-120}
+      DEBUG_PROMPT: ${DEBUG_PROMPT:-false}
+      # Inside the container the vector store lives on the named volume.
+      CHROMA_PATH: /data/chroma
+      CORS_ORIGINS: http://localhost:3000
+    volumes:
+      - chroma:/data/chroma
+    ports:
+      - "8000:8000"
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+      args:
+        # Baked into the JS bundle at build time. Must be reachable from the
+        # browser on the host, so not "http://server:8000".
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      server:
+        condition: service_healthy
+
+volumes:
+  chroma:

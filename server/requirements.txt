@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+pydantic-settings
+chromadb
+sentence-transformers
+langchain-text-splitters
+google-genai

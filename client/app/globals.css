@@ -1,0 +1,357 @@
+:root {
+  --bg: #f7f7f5;
+  --panel: #ffffff;
+  --ink: #1a1a18;
+  --ink-soft: #6b6b66;
+  --line: #e2e2dd;
+  --accent: #2f5d50;
+  --accent-soft: #e8f0ed;
+  --user-bubble: #2f5d50;
+  --user-ink: #ffffff;
+  --danger: #a03232;
+  --radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16171a;
+    --panel: #1e2024;
+    --ink: #e9e9e6;
+    --ink-soft: #9a9a94;
+    --line: #2e3137;
+    --accent: #7fb8a5;
+    --accent-soft: #23302c;
+    --user-bubble: #38695b;
+    --user-ink: #ffffff;
+    --danger: #e08585;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shell {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 24px 20px 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- header --- */
+.header {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 14px;
+  margin-bottom: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.015em;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+}
+
+/* --- message list --- */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 10px 16px 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* Firefox: thin, subtle scrollbar instead of the chunky native one. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+/* WebKit/Chromium: slim overlay-style scrollbar. */
+.messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-soft);
+}
+
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  animation: msg-in 0.24s ease both;
+}
+
+.row.user {
+  justify-content: flex-end;
+}
+
+.row.assistant {
+  justify-content: flex-start;
+}
+
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- avatars --- */
+.avatar {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.05rem;
+  line-height: 1;
+  user-select: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.avatar.bot {
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+}
+
+.avatar.user {
+  background: var(--user-bubble);
+}
+
+.bubble {
+  max-width: 82%;
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.row.user .bubble {
+  background: var(--user-bubble);
+  color: var(--user-ink);
+  border-bottom-right-radius: 3px;
+}
+
+.row.assistant .bubble {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 3px;
+}
+
+/* --- typing indicator --- */
+.bubble.typing {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 15px 16px;
+}
+
+.bubble.typing span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  animation: typing-bounce 1.2s infinite ease-in-out;
+}
+
+.bubble.typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.bubble.typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typing-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    animation: none;
+  }
+  .bubble.typing span {
+    animation-duration: 0.01ms;
+  }
+}
+
+/* --- sources footer: the trust feature --- */
+.sources {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px dashed var(--line);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.sources-label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  margin-bottom: 5px;
+}
+
+.source-item {
+  display: inline-block;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 5px;
+  padding: 2px 7px;
+  margin: 0 5px 5px 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+}
+
+/* --- states --- */
+.status {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  font-style: italic;
+  padding-left: 3px;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 0.85rem;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 9px 12px;
+  background: transparent;
+}
+
+/* --- empty state --- */
+.empty {
+  margin: auto 0;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.empty h2 {
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.examples {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+  align-items: center;
+}
+
+.example {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 15px;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.example:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* --- composer --- */
+.composer {
+  display: flex;
+  gap: 9px;
+  padding: 14px 0 20px;
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.composer input {
+  flex: 1;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.94rem;
+}
+
+.composer input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.composer button {
+  padding: 0 20px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.composer button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .shell {
+    padding: 16px 14px 0;
+  }
+  .bubble {
+    max-width: 94%;
+  }
+}
